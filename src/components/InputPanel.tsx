@@ -11,7 +11,11 @@ interface Props {
 }
 
 const PARAM_PRESETS = [1, 3, 7, 14, 32, 70, 72, 141, 405];
-const CONTEXT_PRESETS = [2, 4, 8, 16, 32, 64, 128];
+const CONTEXT_PRESETS_SMALL = [2, 4, 8, 16, 32, 64, 128];
+const CONTEXT_PRESETS_LARGE = [256, 512, 1024, 2048];
+
+const formatCtx = (n: number) =>
+  n >= 1024 ? `${n / 1024}M` : `${n}K`;
 
 export default function InputPanel({
   paramsBillion, quantization, contextKTokens,
@@ -74,17 +78,17 @@ export default function InputPanel({
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-baseline">
           <label className="text-sm font-medium text-slate-300">{t.contextLabel}</label>
-          <span className="text-2xl font-bold text-violet-400 tabular-nums">{contextKTokens}K</span>
+          <span className="text-2xl font-bold text-violet-400 tabular-nums">{formatCtx(contextKTokens)}</span>
         </div>
         <input
           type="range"
-          min={2} max={128} step={2}
+          min={2} max={2048} step={4}
           value={contextKTokens}
           onChange={(e) => onContext(Number(e.target.value))}
           className="w-full h-2 rounded-full bg-slate-700 accent-violet-400 cursor-pointer"
         />
         <div className="flex flex-wrap gap-2 mt-1">
-          {CONTEXT_PRESETS.map((c) => (
+          {CONTEXT_PRESETS_SMALL.map((c) => (
             <button
               key={c}
               onClick={() => onContext(c)}
@@ -94,7 +98,22 @@ export default function InputPanel({
                   : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
               }`}
             >
-              {c}K
+              {formatCtx(c)}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {CONTEXT_PRESETS_LARGE.map((c) => (
+            <button
+              key={c}
+              onClick={() => onContext(c)}
+              className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${
+                contextKTokens === c
+                  ? 'bg-fuchsia-500 text-white'
+                  : 'bg-slate-700/80 text-fuchsia-300 hover:bg-slate-600'
+              }`}
+            >
+              {formatCtx(c)}
             </button>
           ))}
         </div>
