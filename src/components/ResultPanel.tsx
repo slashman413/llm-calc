@@ -1,4 +1,5 @@
 import { type CalcResult, type HardwareRec } from '../utils/calculator';
+import { useT } from '../i18n/LanguageContext';
 
 interface Props {
   result: CalcResult;
@@ -21,7 +22,7 @@ function MemBar({ label, gb, color }: { label: string; gb: number; color: string
 }
 
 const VENDOR_BADGE: Record<HardwareRec['vendor'], { label: string; cls: string }> = {
-  apple:  { label: '',      cls: 'bg-slate-700 text-slate-300' },
+  apple:  { label: '',       cls: 'bg-slate-700 text-slate-300' },
   nvidia: { label: 'NVIDIA', cls: 'bg-green-900/60 text-green-400 border border-green-800/50' },
   amd:    { label: 'AMD',    cls: 'bg-red-900/60 text-red-400 border border-red-800/50' },
   cpu:    { label: 'CPU',    cls: 'bg-slate-700 text-slate-400' },
@@ -49,7 +50,6 @@ function HwRow({ hw }: { hw: HardwareRec }) {
         {hw.fits ? '✓' : '✗'}
       </span>
       <span className={`flex-1 font-medium ${hw.fits ? 'text-slate-200' : 'text-slate-500'}`}>
-        {/* strip vendor prefix from label to avoid duplication */}
         {hw.label.replace(/^(NVIDIA|AMD|Apple)\s+/i, '')}
       </span>
       {badge.label && (
@@ -66,6 +66,7 @@ function HwRow({ hw }: { hw: HardwareRec }) {
 
 export default function ResultPanel({ result }: Props) {
   const { modelSizeGB, kvCacheGB, bufferGB, totalGB, recommendation } = result;
+  const { t } = useT();
 
   const fitting = recommendation.filter((r) => r.fits);
   const lowestFit = fitting[0];
@@ -82,36 +83,33 @@ export default function ResultPanel({ result }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Total display */}
       <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl text-center">
-        <p className="text-slate-400 text-sm uppercase tracking-widest mb-2">Total VRAM / RAM Required</p>
+        <p className="text-slate-400 text-sm uppercase tracking-widest mb-2">{t.totalLabel}</p>
         <p className={`text-6xl font-extrabold tabular-nums ${urgencyColor}`}>
           {totalGB.toFixed(1)}
           <span className="text-3xl font-semibold ml-2 text-slate-300">GB</span>
         </p>
         {lowestFit && (
           <div className="mt-4 inline-flex items-center gap-2 bg-green-900/40 border border-green-700/50 rounded-lg px-4 py-2">
-            <span className="text-green-400 text-sm">✓ Minimum:</span>
+            <span className="text-green-400 text-sm">✓ {t.minimum}</span>
             <span className="text-green-300 text-sm font-semibold">{lowestFit.label}</span>
           </div>
         )}
       </div>
 
-      {/* Breakdown */}
       <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
-        <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Memory Breakdown</h3>
-        <MemBar label="Model Weights" gb={modelSizeGB} color="bg-cyan-400" />
-        <MemBar label="KV Cache"      gb={kvCacheGB}   color="bg-violet-400" />
-        <MemBar label="Overhead"      gb={bufferGB}    color="bg-slate-400" />
+        <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">{t.breakdown}</h3>
+        <MemBar label={t.modelWeights} gb={modelSizeGB} color="bg-cyan-400" />
+        <MemBar label={t.kvCache}      gb={kvCacheGB}   color="bg-violet-400" />
+        <MemBar label={t.overhead}     gb={bufferGB}    color="bg-slate-400" />
         <div className="border-t border-slate-700 pt-3 flex justify-between text-sm font-semibold">
-          <span className="text-slate-300">Total</span>
+          <span className="text-slate-300">{t.total}</span>
           <span className="text-white font-mono">{totalGB.toFixed(2)} GB</span>
         </div>
       </div>
 
-      {/* Hardware compatibility — grouped by vendor */}
       <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
-        <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Hardware Compatibility</h3>
+        <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">{t.hwCompat}</h3>
         <div className="flex flex-col gap-4 max-h-[480px] overflow-y-auto pr-1">
           {byVendor.map(({ vendor, items }) => (
             <div key={vendor}>
