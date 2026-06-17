@@ -1,4 +1,4 @@
-import { type CalcResult } from '../utils/calculator';
+import { type CalcResult, type HardwareRec } from '../utils/calculator';
 
 interface Props {
   result: CalcResult;
@@ -20,6 +20,50 @@ function MemBar({ label, gb, color }: { label: string; gb: number; color: string
   );
 }
 
+const VENDOR_BADGE: Record<HardwareRec['vendor'], { label: string; cls: string }> = {
+  apple:  { label: '',      cls: 'bg-slate-700 text-slate-300' },
+  nvidia: { label: 'NVIDIA', cls: 'bg-green-900/60 text-green-400 border border-green-800/50' },
+  amd:    { label: 'AMD',    cls: 'bg-red-900/60 text-red-400 border border-red-800/50' },
+  cpu:    { label: 'CPU',    cls: 'bg-slate-700 text-slate-400' },
+};
+
+const VENDOR_ORDER: HardwareRec['vendor'][] = ['apple', 'nvidia', 'amd', 'cpu'];
+const VENDOR_TITLE: Record<HardwareRec['vendor'], string> = {
+  apple:  '🍎  Apple',
+  nvidia: '🟢  NVIDIA',
+  amd:    '🔴  AMD',
+  cpu:    '💾  CPU RAM',
+};
+
+function HwRow({ hw }: { hw: HardwareRec }) {
+  const badge = VENDOR_BADGE[hw.vendor];
+  return (
+    <div
+      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+        hw.fits
+          ? 'bg-green-900/25 border border-green-800/40'
+          : 'bg-slate-900/50 border border-slate-700/30 opacity-40'
+      }`}
+    >
+      <span className={hw.fits ? 'text-green-400 font-bold' : 'text-red-600'}>
+        {hw.fits ? '✓' : '✗'}
+      </span>
+      <span className={`flex-1 font-medium ${hw.fits ? 'text-slate-200' : 'text-slate-500'}`}>
+        {/* strip vendor prefix from label to avoid duplication */}
+        {hw.label.replace(/^(NVIDIA|AMD|Apple)\s+/i, '')}
+      </span>
+      {badge.label && (
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${badge.cls}`}>
+          {badge.label}
+        </span>
+      )}
+      <span className={`font-mono text-xs w-12 text-right ${hw.fits ? 'text-slate-400' : 'text-slate-600'}`}>
+        {hw.vram} GB
+      </span>
+    </div>
+  );
+}
+
 export default function ResultPanel({ result }: Props) {
   const { modelSizeGB, kvCacheGB, bufferGB, totalGB, recommendation } = result;
 
@@ -30,6 +74,11 @@ export default function ResultPanel({ result }: Props) {
     totalGB <= 8  ? 'text-green-400' :
     totalGB <= 24 ? 'text-yellow-400' :
     totalGB <= 48 ? 'text-orange-400' : 'text-red-400';
+
+  const byVendor = VENDOR_ORDER.map((v) => ({
+    vendor: v,
+    items: recommendation.filter((r) => r.vendor === v),
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -60,26 +109,18 @@ export default function ResultPanel({ result }: Props) {
         </div>
       </div>
 
-      {/* Hardware recommendations */}
-      <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col gap-3">
+      {/* Hardware compatibility — grouped by vendor */}
+      <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
         <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Hardware Compatibility</h3>
-        <div className="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
-          {recommendation.map((hw) => (
-            <div
-              key={hw.label}
-              className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors ${
-                hw.fits
-                  ? 'bg-green-900/30 border border-green-800/50'
-                  : 'bg-slate-900/50 border border-slate-700/50 opacity-50'
-              }`}
-            >
-              <span className={hw.fits ? 'text-green-400' : 'text-red-500'}>{hw.fits ? '✓' : '✗'}</span>
-              <span className={`flex-1 font-medium ${hw.fits ? 'text-slate-200' : 'text-slate-500'}`}>
-                {hw.label}
-              </span>
-              <span className={`font-mono text-xs ${hw.fits ? 'text-slate-400' : 'text-slate-600'}`}>
-                {hw.vram} GB
-              </span>
+        <div className="flex flex-col gap-4 max-h-[480px] overflow-y-auto pr-1">
+          {byVendor.map(({ vendor, items }) => (
+            <div key={vendor}>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                {VENDOR_TITLE[vendor]}
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {items.map((hw) => <HwRow key={hw.label} hw={hw} />)}
+              </div>
             </div>
           ))}
         </div>
