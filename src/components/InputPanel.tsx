@@ -1,4 +1,5 @@
 import { type Quantization, QUANT_OPTIONS, QUANT_LABELS } from '../utils/calculator';
+import { useT } from '../i18n/LanguageContext';
 
 interface Props {
   paramsBillion: number;
@@ -16,16 +17,18 @@ export default function InputPanel({
   paramsBillion, quantization, contextKTokens,
   onParams, onQuant, onContext,
 }: Props) {
+  const { t } = useT();
+
   return (
     <div className="flex flex-col gap-8 bg-slate-800/60 border border-slate-700 rounded-2xl p-6 shadow-xl">
       <h2 className="text-lg font-semibold text-slate-200 tracking-wide uppercase">
-        ⚙️ Model Configuration
+        {t.inputTitle}
       </h2>
 
       {/* Parameters */}
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-baseline">
-          <label className="text-sm font-medium text-slate-300">Parameters</label>
+          <label className="text-sm font-medium text-slate-300">{t.params}</label>
           <span className="text-2xl font-bold text-cyan-400 tabular-nums">{paramsBillion}B</span>
         </div>
         <input
@@ -54,7 +57,7 @@ export default function InputPanel({
 
       {/* Quantization */}
       <div className="flex flex-col gap-3">
-        <label className="text-sm font-medium text-slate-300">Quantization Format</label>
+        <label className="text-sm font-medium text-slate-300">{t.quant}</label>
         <select
           value={quantization}
           onChange={(e) => onQuant(e.target.value as Quantization)}
@@ -64,15 +67,13 @@ export default function InputPanel({
             <option key={q} value={q}>{QUANT_LABELS[q]}</option>
           ))}
         </select>
-        <p className="text-xs text-slate-500">
-          Q4_K_M is the sweet spot — best quality-to-size ratio for most use cases.
-        </p>
+        <p className="text-xs text-slate-500">{t.quantHint}</p>
       </div>
 
       {/* Context Window */}
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-baseline">
-          <label className="text-sm font-medium text-slate-300">Context Window</label>
+          <label className="text-sm font-medium text-slate-300">{t.contextLabel}</label>
           <span className="text-2xl font-bold text-violet-400 tabular-nums">{contextKTokens}K</span>
         </div>
         <input
@@ -97,9 +98,7 @@ export default function InputPanel({
             </button>
           ))}
         </div>
-        <p className="text-xs text-slate-500">
-          Longer contexts consume significantly more VRAM for the KV cache.
-        </p>
+        <p className="text-xs text-slate-500">{t.contextHint}</p>
       </div>
     </div>
   );
