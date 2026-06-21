@@ -10,7 +10,7 @@ interface Props {
   onContext: (v: number) => void;
 }
 
-const PARAM_PRESETS = [1, 3, 7, 14, 32, 70, 72, 141, 405];
+const PARAM_PRESETS = [1, 3, 7, 14, 27, 32, 70, 72, 141, 405];
 const CONTEXT_PRESETS_SMALL = [2, 4, 8, 16, 32, 64, 128];
 const CONTEXT_PRESETS_LARGE = [256, 512, 1024, 2048];
 
