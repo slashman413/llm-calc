@@ -54,6 +54,11 @@ function AppInner() {
 
       <footer className="border-t border-slate-800 py-6 text-center text-slate-600 text-xs">
         {t.footer}
+        <div className="mt-2">
+          <a href="https://slashman413.github.io/terms.html" className="underline hover:text-slate-400">Terms</a>
+          {' · '}
+          <a href="https://slashman413.github.io/privacy.html" className="underline hover:text-slate-400">Privacy</a>
+        </div>
       </footer>
     </div>
   );
