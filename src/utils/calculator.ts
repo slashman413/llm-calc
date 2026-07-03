@@ -35,8 +35,8 @@ const BYTES_PER_WEIGHT: Record<Quantization, number> = {
 
 // KV cache bytes per token per layer (fp16 key + value, 2 heads combined)
 // Each token needs 2 * num_heads * head_dim * num_layers bytes for KV cache
-// Approximation: ~0.125 MB per 1K tokens per billion params (heuristic)
-const KV_MB_PER_K_TOKEN_PER_B_PARAM = 0.125;
+// Approximation: ~1.7 MB per 1K tokens per billion params (heuristic)
+const KV_MB_PER_K_TOKEN_PER_B_PARAM = 1.7;
 
 const HARDWARE: Array<{ label: string; vram: number; note: string; vendor: 'apple' | 'nvidia' | 'amd' | 'cpu' }> = [
   // Apple
