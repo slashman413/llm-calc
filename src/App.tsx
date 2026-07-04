@@ -53,6 +53,26 @@ function AppInner() {
       </main>
 
       <footer className="border-t border-slate-800 py-6 text-center text-slate-600 text-xs">
+        {/* Footer CTA */}
+        <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="https://slashman413.gumroad.com/l/saas-starter?utm_source=llm-calc&utm_medium=web&utm_campaign=llm-calc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-400 transition-colors text-xs font-medium"
+          >
+            🛠 SaaS Starter — ship a multi-tenant SaaS this weekend
+          </a>
+          <a
+            href="https://slashman413.github.io/twse-backtests/?utm_source=llm-calc&utm_medium=web&utm_campaign=llm-calc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-slate-300 transition-colors text-xs font-medium"
+          >
+            📈 台股量化訊號 TWSE
+          </a>
+        </div>
+
         {t.footer}
         <div className="mt-2">
           <a href="https://slashman413.github.io/terms.html" className="underline hover:text-slate-400">Terms</a>
