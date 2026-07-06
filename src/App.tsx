@@ -56,7 +56,7 @@ function AppInner() {
         {/* Footer CTA */}
         <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
-            href="https://slashman413.gumroad.com/l/saas-starter?utm_source=llm-calc&utm_medium=web&utm_campaign=llm-calc"
+            href="https://slashmaster6.gumroad.com/l/kuvajr?utm_source=llm-calc&utm_medium=web&utm_campaign=llm-calc"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-400 transition-colors text-xs font-medium"
