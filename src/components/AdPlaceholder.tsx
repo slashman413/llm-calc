@@ -29,7 +29,7 @@ export default function AdPlaceholder({ id, slot }: Props) {
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
-        data-ad-client="ca-pub-5115666613619890"
+        data-ad-client="ca-pub-7217603696203672"
         {...(slot ? { 'data-ad-slot': slot } : { 'data-ad-format': 'auto', 'data-full-width-responsive': 'true' })}
       />
     </div>
