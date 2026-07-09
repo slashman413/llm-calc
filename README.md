@@ -1,3 +1,13 @@
+# llm-calc
+
+Local LLM VRAM/RAM calculator, deployed at [slashmantools.us/llm-calc](https://slashmantools.us/llm-calc/).
+
+## Model VRAM guides
+
+Static, crawlable per-model pages live in [`public/models/`](public/models/) and are served at [/llm-calc/models/](https://slashmantools.us/llm-calc/models/). Each page lists approximate VRAM needed at FP16/Q8_0/Q6_K/Q5_K_M/Q4_K_M with 8k context and example GPUs that fit (Llama 3.1/3.3, Qwen2.5, DeepSeek-R1, Mistral, Mixtral, Gemma 2, Phi-4). Vite copies `public/` verbatim into `dist/`, so these deploy with the app; they are listed in `public/sitemap.xml`.
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
