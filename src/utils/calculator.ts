@@ -22,21 +22,30 @@ export interface HardwareRec {
   vendor: 'apple' | 'nvidia' | 'amd' | 'cpu';
 }
 
-// Bytes per weight for each quantization
+// Bytes per weight for each quantization, calibrated against real published
+// GGUF file sizes. llama.cpp k-quants mix bit widths across tensors (attention
+// vs FFN vs embeddings), so effective bytes/param is higher than the nominal
+// bit count suggests — e.g. Q4_K_M is ~4.85 bpw in practice
+// (Llama-3.1-70B Q4_K_M ≈ 43 GB → ~0.61 bytes/param).
 const BYTES_PER_WEIGHT: Record<Quantization, number> = {
   FP16:   2.0,
-  Q8_0:   1.0,
-  Q6_K:   0.75,
-  Q5_K_M: 0.625,
-  Q4_K_M: 0.5,
-  Q3_K_M: 0.375,
-  AWQ:    0.5,   // 4-bit AWQ ≈ same as Q4
+  Q8_0:   1.06,  // ~8.5 bpw
+  Q6_K:   0.82,  // ~6.6 bpw
+  Q5_K_M: 0.71,  // ~5.7 bpw
+  Q4_K_M: 0.61,  // ~4.85 bpw
+  Q3_K_M: 0.49,  // ~3.9 bpw
+  AWQ:    0.55,  // 4-bit + group-128 scales/zeros + fp16 embeddings
 };
 
-// KV cache bytes per token per layer (fp16 key + value, 2 heads combined)
-// Each token needs 2 * num_heads * head_dim * num_layers bytes for KV cache
-// Approximation: ~1.7 MB per 1K tokens per billion params (heuristic)
-const KV_MB_PER_K_TOKEN_PER_B_PARAM = 1.7;
+// KV cache (fp16): bytes per token = layers × kv_heads × head_dim × 2 bytes × 2 (K+V).
+// The calculator only knows the param count, so we use a power-law fit calibrated
+// against modern dense GQA architectures (typically 8 KV heads × 128 head_dim):
+//   ~8B (32 layers) → ~1.1 GB @ 8k    ~14B (48 layers) → ~1.6 GB @ 8k
+//   ~32B (64 layers) → ~2.1 GB @ 8k   ~70B (80 layers) → ~2.7 GB @ 8k
+// KV size grows with depth (≈ params^0.4), not linearly with params.
+// kvCacheGB = contextKTokens × COEFF × params^EXP
+const KV_GB_PER_K_TOKEN_COEFF = 0.064;
+const KV_PARAMS_EXPONENT = 0.4;
 
 const HARDWARE: Array<{ label: string; vram: number; note: string; vendor: 'apple' | 'nvidia' | 'amd' | 'cpu' }> = [
   // Apple
@@ -75,8 +84,9 @@ export function calculate(input: CalcInput): CalcResult {
   const bytesPerWeight = BYTES_PER_WEIGHT[quantization];
   const modelSizeGB = (paramsBillion * 1e9 * bytesPerWeight) / 1e9;
 
-  // KV cache: heuristic based on params * context
-  const kvCacheGB = (paramsBillion * contextKTokens * KV_MB_PER_K_TOKEN_PER_B_PARAM) / 1024;
+  // KV cache: depth-calibrated heuristic (see constants above)
+  const kvCacheGB =
+    contextKTokens * KV_GB_PER_K_TOKEN_COEFF * Math.pow(paramsBillion, KV_PARAMS_EXPONENT);
 
   // Buffer: 1 GB base + 5% of model size for overhead
   const bufferGB = Math.max(1.0, modelSizeGB * 0.05);
@@ -102,12 +112,12 @@ export function calculate(input: CalcInput): CalcResult {
 
 export const QUANT_LABELS: Record<Quantization, string> = {
   FP16:   'FP16 — Full precision (2 bytes/param)',
-  Q8_0:   'Q8_0 — 8-bit (1 byte/param)',
-  Q6_K:   'Q6_K — 6-bit (~0.75 bytes/param)',
-  Q5_K_M: 'Q5_K_M — 5-bit (~0.625 bytes/param)',
-  Q4_K_M: 'Q4_K_M — 4-bit (~0.5 bytes/param) ★ Recommended',
-  Q3_K_M: 'Q3_K_M — 3-bit (~0.375 bytes/param)',
-  AWQ:    'AWQ — 4-bit Activation-aware (≈ Q4)',
+  Q8_0:   'Q8_0 — 8-bit (~1.06 bytes/param)',
+  Q6_K:   'Q6_K — ~6.6-bit (~0.82 bytes/param)',
+  Q5_K_M: 'Q5_K_M — ~5.7-bit (~0.71 bytes/param)',
+  Q4_K_M: 'Q4_K_M — ~4.85-bit (~0.61 bytes/param) ★ Recommended',
+  Q3_K_M: 'Q3_K_M — ~3.9-bit (~0.49 bytes/param)',
+  AWQ:    'AWQ — 4-bit Activation-aware (~0.55 bytes/param)',
 };
 
 export const QUANT_OPTIONS: Quantization[] = [
