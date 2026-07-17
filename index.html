@@ -89,6 +89,23 @@
 
       <h3>How much VRAM for a 7B model?</h3>
       <p>About <strong>6.4 GB in Q4_K_M</strong>, 9.5 GB in Q8_0, and 16 GB in FP16 — a 7B model runs comfortably on an 8 GB GPU in 4-bit, so most modern laptops and entry GPUs can handle it.</p>
+
+      <h3>📎 Embed this calculator (free)</h3>
+      <p>Drop the VRAM calculator into your own blog or docs — paste this snippet:</p>
+      <textarea id="embedCode" readonly style="width:100%;min-height:64px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f1f5f9;color:#1e293b;border:1px solid #cbd5e1;border-radius:8px;padding:10px">&lt;iframe src="https://slashmantools.us/llm-calc/embed.html" width="100%" height="360" style="border:1px solid rgba(0,0,0,.12);border-radius:12px;max-width:640px" title="Local LLM VRAM Calculator" loading="lazy"&gt;&lt;/iframe&gt;</textarea>
+      <button id="copyEmbed" style="margin-top:8px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1px solid #0d9488;background:#0d9488;color:#fff;font-weight:600;font-size:14px">📋 Copy embed code</button>
+      <script>
+        (function(){
+          var b=document.getElementById('copyEmbed'), t=document.getElementById('embedCode');
+          b.addEventListener('click',function(){
+            t.select(); t.setSelectionRange(0,99999);
+            var done=function(){ b.textContent='✓ Copied!'; setTimeout(function(){b.textContent='📋 Copy embed code';},1800);
+              try{gtag('event','copy_embed_code',{widget:'llm-calc'})}catch(e){} };
+            if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t.value).then(done,function(){document.execCommand('copy');done();});}
+            else{document.execCommand('copy');done();}
+          });
+        })();
+      </script>
     </section>
 
     <footer style="text-align:center;padding:16px;font-size:12px;color:#94a3b8;font-family:system-ui,sans-serif"><a href="./privacy.html" style="color:#94a3b8;text-decoration:none">Privacy Policy</a><div id="vc" style="text-align:center;font-size:11px;color:#94a3b8;margin:12px 0;opacity:.85"></div><script>fetch("https://abacus.jasoncameron.dev/hit/sm413-llmcalc/views").then(function(r){return r.json()}).then(function(d){document.getElementById("vc").textContent="\u{1F441} "+Number(d.value).toLocaleString()+" 次瀏覽 · views";}).catch(function(){});</script></footer>
