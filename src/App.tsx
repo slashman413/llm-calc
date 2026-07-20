@@ -50,9 +50,14 @@ function AppInner() {
         <AdPlaceholder id="ad-bottom" />
 
         <FAQ />
+
+        <AdPlaceholder id="ad-faq" />
       </main>
 
       <footer className="border-t border-slate-800 py-6 text-center text-slate-600 text-xs">
+        <div className="max-w-6xl mx-auto px-4 mb-6">
+          <AdPlaceholder id="ad-footer" />
+        </div>
         {/* Footer CTA */}
         <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
