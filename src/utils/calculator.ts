@@ -53,6 +53,8 @@ const HARDWARE: Array<{ label: string; vram: number; note: string; vendor: 'appl
   { label: 'Apple M-series 16 GB',            vram: 16,  note: 'Unified memory (shared CPU+GPU)',      vendor: 'apple'  },
   { label: 'Apple M-series 32 GB',            vram: 32,  note: 'Unified memory (shared CPU+GPU)',      vendor: 'apple'  },
   { label: 'Apple M-series 64 GB',            vram: 64,  note: 'Unified memory (shared CPU+GPU)',      vendor: 'apple'  },
+  { label: 'Apple M-series 128 GB',           vram: 128, note: 'Unified memory (M4 Max / M3 Max)',     vendor: 'apple'  },
+  { label: 'Apple M3 Ultra 512 GB',           vram: 512, note: 'Mac Studio; unified memory',           vendor: 'apple'  },
   // NVIDIA
   { label: 'NVIDIA RTX 3060 12 GB',           vram: 12,  note: 'Great for small models',               vendor: 'nvidia' },
   { label: 'NVIDIA RTX 4070 12 GB',           vram: 12,  note: 'Fast inference for small models',      vendor: 'nvidia' },
@@ -62,6 +64,8 @@ const HARDWARE: Array<{ label: string; vram: number; note: string; vendor: 'appl
   { label: 'NVIDIA RTX 5090 32 GB',           vram: 32,  note: 'Flagship Blackwell consumer GPU',      vendor: 'nvidia' },
   { label: 'NVIDIA RTX 6000 Ada 48 GB',       vram: 48,  note: 'Professional workstation GPU',         vendor: 'nvidia' },
   { label: 'NVIDIA A100 80 GB',               vram: 80,  note: 'Data-center grade',                    vendor: 'nvidia' },
+  { label: 'NVIDIA RTX PRO 6000 Blackwell 96 GB', vram: 96, note: 'Workstation Blackwell GPU',           vendor: 'nvidia' },
+  { label: 'NVIDIA DGX Spark (GB10) 128 GB',  vram: 120, note: '128 GB unified; ~120 GB usable for models', vendor: 'nvidia' },
   // AMD
   { label: 'AMD RX 7600 8 GB',                vram: 8,   note: 'Entry-level RDNA 3; ROCm support',     vendor: 'amd'    },
   { label: 'AMD RX 7700 XT 12 GB',            vram: 12,  note: 'Mid-range RDNA 3; ROCm support',       vendor: 'amd'    },
@@ -70,6 +74,7 @@ const HARDWARE: Array<{ label: string; vram: number; note: string; vendor: 'appl
   { label: 'AMD RX 7900 XTX 24 GB',           vram: 24,  note: 'Top consumer RDNA 3; ROCm support',    vendor: 'amd'    },
   { label: 'AMD RX 9070 XT 16 GB',            vram: 16,  note: 'RDNA 4 mid-range; ROCm support',       vendor: 'amd'    },
   { label: 'AMD Radeon PRO W7900 48 GB',      vram: 48,  note: 'Workstation card; excellent ROCm',     vendor: 'amd'    },
+  { label: 'AMD Ryzen AI Max+ 395 128 GB',    vram: 96,  note: 'Strix Halo unified; up to ~96 GB as VRAM', vendor: 'amd'    },
   { label: 'AMD Instinct MI300X 192 GB',      vram: 192, note: 'Data-center; 192 GB HBM3 memory',      vendor: 'amd'    },
   // CPU
   { label: 'CPU RAM only (32 GB)',             vram: 32,  note: 'Slow but works (llama.cpp)',            vendor: 'cpu'    },

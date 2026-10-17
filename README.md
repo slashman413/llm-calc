@@ -1,83 +1,52 @@
-# llm-calc
+# llm-calc — Local LLM VRAM & RAM calculator
 
-Local LLM VRAM/RAM calculator, deployed at [slashmantools.us/llm-calc](https://slashmantools.us/llm-calc/).
+**Will this model fit on my GPU?** Pick a parameter count, a quantization and a context
+length, and get the memory you need (weights + KV cache + runtime buffer), plus which GPUs,
+Macs and unified-memory boxes can run it.
 
-## Model VRAM guides
+**▶ Use it: [slashmantools.us/llm-calc](https://slashmantools.us/llm-calc/)**. It's free, runs in your browser, and needs no signup.
 
-Static, crawlable per-model pages live in [`public/models/`](public/models/) and are served at [/llm-calc/models/](https://slashmantools.us/llm-calc/models/). Each page lists approximate VRAM needed at FP16/Q8_0/Q6_K/Q5_K_M/Q4_K_M with 8k context and example GPUs that fit (Llama 3.1/3.3, Qwen2.5, DeepSeek-R1, Mistral, Mixtral, Gemma 2, Phi-4). Vite copies `public/` verbatim into `dist/`, so these deploy with the app; they are listed in `public/sitemap.xml`.
+## What it covers
+
+- **Quantizations:** FP16, Q8_0, Q6_K, Q5_K_M, Q4_K_M, Q3_K_M (llama.cpp / Ollama GGUF) and AWQ (vLLM).
+- **Context length:** 2K to 128K tokens. KV cache is often what pushes a model that fits into one that doesn't.
+- **Hardware:** NVIDIA RTX 30/40/50, RTX 6000 Ada, RTX PRO 6000 Blackwell, A100,
+  **DGX Spark (GB10, 128 GB unified)**, AMD Radeon RX 7000/9000 and Ryzen AI Max+ 395 (Strix Halo),
+  Apple M-series 8 GB to 512 GB unified memory, and CPU-only RAM.
+- **Model pages:** [/llm-calc/models/](https://slashmantools.us/llm-calc/models/) has per-model VRAM tables
+  (Llama 3.1/3.3, Qwen2.5 / Qwen2.5-Coder, DeepSeek-R1 70B/671B, Mistral, Mixtral, Gemma 2, Phi-4).
+
+## How the estimate is calculated
+
+```
+weights_GB  = params × bytes_per_weight(quant)    # e.g. Q4_K_M ≈ 0.61 bytes/param (real GGUF sizes, not 4/8)
+kv_cache_GB = context_k_tokens × 0.064 × params^0.4   # fitted to modern GQA models (8 KV heads × 128 head_dim)
+total_GB    = weights_GB + kv_cache_GB + runtime buffer
+```
+
+The coefficients are in [`src/utils/calculator.ts`](src/utils/calculator.ts). These are estimates. Real usage
+varies by runtime (llama.cpp, Ollama, vLLM, SGLang), batch size and KV-cache quantization. If you measure a model
+that is far off, please open an issue with the numbers.
+
+## Running two models on one DGX Spark?
+
+The GB10's 128 GB of unified memory looks like plenty, until two inference engines start
+competing for it. Notes from a box that does this every day:
+[DGX Spark dual-model deployment guide](https://slashmantools.us/blog/dgx-spark-kit/).
+
+## Develop
+
+```bash
+npm install
+npm run dev      # Vite dev server
+npm run build    # tsc -b && vite build → dist/
+npm run lint
+```
+
+Vite + React 19 + TypeScript + Tailwind. Static, crawlable model pages live in [`public/models/`](public/models/) and
+deploy with the app (listed in `public/sitemap.xml`). UI is available in English, 繁體中文, हिन्दी, Español and Français.
 
 ---
 
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+More free, client-side tools: [slashmantools.us](https://slashmantools.us/) · Built by [@slashman413](https://github.com/slashman413) ·
+[Support on Ko-fi](https://ko-fi.com/ytstories0413)
