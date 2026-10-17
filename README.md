@@ -46,6 +46,12 @@ npm run lint
 Vite + React 19 + TypeScript + Tailwind. Static, crawlable model pages live in [`public/models/`](public/models/) and
 deploy with the app (listed in `public/sitemap.xml`). UI is available in English, 繁體中文, हिन्दी, Español and Français.
 
+**Where it ships.** Since 2026-08-11 the live calculator is served from
+[free-tools-hub](https://github.com/slashman413/free-tools-hub/tree/main/llm-calc) at
+`tools.slashmantools.us/llm-calc/`. This repo's root `index.html` is only a redirect, so its own Pages deploy
+publishes no app. After changing `src/`, build with the app shell from `git show 620e848^:index.html`, then copy
+the new `dist/assets/index-*.js` into the hub (keep the hub's `index.html` and update its script name).
+
 ---
 
 More free, client-side tools: [slashmantools.us](https://slashmantools.us/) · Built by [@slashman413](https://github.com/slashman413) ·
