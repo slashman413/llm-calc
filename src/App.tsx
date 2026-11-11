@@ -11,6 +11,9 @@ function AppInner() {
   const { t } = useT();
 
   const [heroPre, heroPost] = t.heroTitle.split('{VRAM}');
+  const dgxKitBanner =
+    t.dgxKitBanner ??
+    '🚀 NVIDIA DGX Spark / GB10 dev kit — $79 with code GB10EARLY. Read the full guide →';
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
@@ -24,6 +27,18 @@ function AppInner() {
           <LanguageSwitcher />
         </div>
       </header>
+
+      {/* DGX Spark / GB10 kit banner — links to the portal product page */}
+      <div className="max-w-6xl mx-auto px-4 pt-4">
+        <a
+          href="https://slashmantools.us/blog/dgx-spark-kit/?utm_source=llm-calc&utm_medium=kit-banner&utm_campaign=dgx-spark-kit"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-2.5 text-center text-xs sm:text-sm font-medium text-amber-300 hover:bg-amber-500/20 transition-colors"
+        >
+          {dgxKitBanner}
+        </a>
+      </div>
 
       <main className="max-w-6xl mx-auto px-4 py-8 flex flex-col gap-6">
         <div className="text-center">

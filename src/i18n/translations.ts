@@ -3,6 +3,7 @@ export interface Translations {
   siteSubtitle: string;
   heroTitle: string; // contains {VRAM} placeholder
   heroDesc: string;
+  dgxKitBanner?: string; // optional; falls back to English in App.tsx
   inputTitle: string;
   params: string;
   quant: string;
@@ -54,6 +55,7 @@ export const TRANSLATIONS: Record<string, Translations> = {
     siteSubtitle: 'for GGUF & AWQ',
     heroTitle: 'How much {VRAM} do I need?',
     heroDesc: 'Estimate memory requirements for running local LLMs — supports GGUF, AWQ, FP16 and more. Results update instantly.',
+    dgxKitBanner: '🚀 NVIDIA DGX Spark / GB10 dev kit — $79 with code GB10EARLY. Read the full guide →',
     inputTitle: '⚙️ Model Configuration',
     params: 'Parameters',
     quant: 'Quantization Format',
@@ -83,6 +85,7 @@ export const TRANSLATIONS: Record<string, Translations> = {
     siteSubtitle: '支援 GGUF & AWQ',
     heroTitle: '我需要多少 {VRAM}？',
     heroDesc: '估算在本地執行 LLM 所需記憶體 — 支援 GGUF、AWQ、FP16 等格式，結果即時更新。',
+    dgxKitBanner: '🚀 NVIDIA DGX Spark / GB10 開發套件 — 使用代碼 GB10EARLY 享 $79 價格。閱讀完整指南 →',
     inputTitle: '⚙️ 模型設定',
     params: '參數量',
     quant: '量化格式',
